@@ -1,0 +1,97 @@
+base_model: Qwen/CodeQwen1.5-7B-Chat
+model_type: AutoModelForCausalLM
+tokenizer_type: AutoTokenizer
+is_mistral_derived_model: false
+
+load_in_8bit: false
+load_in_4bit: true
+strict: false
+
+lora_fan_in_fan_out: false
+data_seed: 49
+seed: 49
+
+datasets:
+  - path: sample_data/alpaca_synth_cypher.jsonl
+    type: sharegpt
+    conversation: alpaca
+dataset_prepared_path: last_run_prepared
+val_set_size: 0.1
+output_dir: ./qlora-alpaca-out
+# hub_model_id: hamel/hc-mistral-alpaca
+
+adapter: qlora
+lora_model_dir:
+
+sequence_len: 896
+sample_packing: false
+pad_to_sequence_len: true
+
+lora_r: 32
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target_linear: true
+lora_fan_in_fan_out:
+lora_target_modules:
+  - gate_proj
+  - down_proj
+  - up_proj
+  - q_proj
+  - v_proj
+  - k_proj
+  - o_proj
+
+# If you added new tokens to the tokenizer, you may need to save some LoRA modules because they need to know the new tokens.
+# For LLaMA and Mistral, you need to save `embed_tokens` and `lm_head`. It may vary for other models.
+# `embed_tokens` converts tokens to embeddings, and `lm_head` converts embeddings to token probabilities.
+# https://github.com/huggingface/peft/issues/334#issuecomment-1561727994
+lora_modules_to_save:
+  - embed_tokens
+  - lm_head
+
+# wandb_project: hc-axolotl-mistral
+# wandb_entity: hamelsmu
+
+gradient_accumulation_steps: 4
+micro_batch_size: 16
+eval_batch_size: 16
+num_epochs: 3
+optimizer: adamw_bnb_8bit
+lr_scheduler: cosine
+learning_rate: 0.0002
+max_grad_norm: 1.0
+adam_beta2: 0.95
+adam_epsilon: 0.00001
+save_total_limit: 12
+
+train_on_inputs: false
+group_by_length: false
+bf16: true
+fp16: false
+tf32: false
+
+gradient_checkpointing: true
+early_stopping_patience:
+resume_from_checkpoint:
+local_rank:
+logging_steps: 1
+xformers_attention:
+flash_attention: true
+
+loss_watchdog_threshold: 5.0
+loss_watchdog_patience: 3
+
+warmup_steps: 20
+evals_per_epoch: 4
+eval_table_size:
+eval_table_max_new_tokens: 128
+saves_per_epoch: 6
+debug:
+weight_decay: 0.0
+fsdp:
+fsdp_config:
+special_tokens:
+  bos_token: "<s>"
+  eos_token: "</s>"
+  unk_token: "<unk>"
+save_safetensors: true
