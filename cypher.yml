@@ -18,7 +18,7 @@ datasets:
 dataset_prepared_path: last_run_prepared
 val_set_size: 0.1
 output_dir: ./qlora-alpaca-out
-# hub_model_id: hamel/hc-mistral-alpaca
+# hub_model_id: jermyn/CodeQwen1.5-7B-Chat-NLQ2Cypher
 
 adapter: qlora
 lora_model_dir:
@@ -49,20 +49,19 @@ lora_modules_to_save:
   - embed_tokens
   - lm_head
 
-# wandb_project: hc-axolotl-mistral
-# wandb_entity: hamelsmu
+wandb_project: fine-tune-axolotl
+wandb_entity: jermyn
 
-gradient_accumulation_steps: 4
-micro_batch_size: 16
-eval_batch_size: 16
-num_epochs: 3
+gradient_accumulation_steps: 1
+micro_batch_size: 8
+eval_batch_size: 8
+num_epochs: 6
 optimizer: adamw_bnb_8bit
 lr_scheduler: cosine
-learning_rate: 0.0002
+learning_rate: 0.0005
 max_grad_norm: 1.0
 adam_beta2: 0.95
 adam_epsilon: 0.00001
-save_total_limit: 12
 
 train_on_inputs: false
 group_by_length: false
@@ -81,11 +80,13 @@ flash_attention: true
 loss_watchdog_threshold: 5.0
 loss_watchdog_patience: 3
 
-warmup_steps: 20
+warmup_steps: 10
 evals_per_epoch: 4
 eval_table_size:
 eval_table_max_new_tokens: 128
-saves_per_epoch: 6
+# saves_per_epoch: 6
+save_steps: 10
+save_total_limit: 3
 debug:
 weight_decay: 0.0
 fsdp:
