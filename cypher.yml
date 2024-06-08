@@ -1,4 +1,5 @@
-base_model: Qwen/CodeQwen1.5-7B-Chat
+base_model: deepseek-ai/deepseek-coder-1.3b-instruct
+# base_model: Qwen/CodeQwen1.5-7B-Chat
 model_type: AutoModelForCausalLM
 tokenizer_type: AutoTokenizer
 is_mistral_derived_model: false
@@ -17,8 +18,11 @@ datasets:
     conversation: alpaca
 dataset_prepared_path: last_run_prepared
 val_set_size: 0.1
-output_dir: ./qlora-alpaca-out
+output_dir: ./qlora-alpaca-deepseek-1.3b-inst
+# output_dir: ./qlora-alpaca-out
+
 # hub_model_id: jermyn/CodeQwen1.5-7B-Chat-NLQ2Cypher
+hub_model_id: jermyn/deepseek-code-1.3b-inst-NLQ2Cypher
 
 adapter: qlora
 lora_model_dir:
@@ -45,20 +49,20 @@ lora_target_modules:
 # For LLaMA and Mistral, you need to save `embed_tokens` and `lm_head`. It may vary for other models.
 # `embed_tokens` converts tokens to embeddings, and `lm_head` converts embeddings to token probabilities.
 # https://github.com/huggingface/peft/issues/334#issuecomment-1561727994
-lora_modules_to_save:
-  - embed_tokens
-  - lm_head
+# lora_modules_to_save:
+#   - embed_tokens
+#   - lm_head
 
 wandb_project: fine-tune-axolotl
 wandb_entity: jermyn
 
 gradient_accumulation_steps: 1
-micro_batch_size: 8
-eval_batch_size: 8
+micro_batch_size: 16
+eval_batch_size: 16
 num_epochs: 6
 optimizer: adamw_bnb_8bit
 lr_scheduler: cosine
-learning_rate: 0.0005
+learning_rate: 0.001
 max_grad_norm: 1.0
 adam_beta2: 0.95
 adam_epsilon: 0.00001
@@ -91,8 +95,8 @@ debug:
 weight_decay: 0.0
 fsdp:
 fsdp_config:
-special_tokens:
-  bos_token: "<s>"
-  eos_token: "</s>"
-  unk_token: "<unk>"
+# special_tokens:
+#   bos_token: "<s>"
+#   eos_token: "</s>"
+#   unk_token: "<unk>"
 save_safetensors: true
