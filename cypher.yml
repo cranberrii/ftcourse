@@ -1,11 +1,11 @@
-base_model: deepseek-ai/deepseek-coder-1.3b-instruct
-# base_model: Qwen/CodeQwen1.5-7B-Chat
+# base_model: deepseek-ai/deepseek-coder-1.3b-instruct
+base_model: Qwen/CodeQwen1.5-7B-Chat
 model_type: AutoModelForCausalLM
 tokenizer_type: AutoTokenizer
 is_mistral_derived_model: false
 
-load_in_8bit: false
-load_in_4bit: true
+load_in_8bit: true
+load_in_4bit: false
 strict: false
 
 lora_fan_in_fan_out: false
@@ -18,13 +18,13 @@ datasets:
     conversation: alpaca
 dataset_prepared_path: last_run_prepared
 val_set_size: 0.1
-output_dir: ./qlora-alpaca-deepseek-1.3b-inst
+output_dir: ./qlora-alpaca-codeqwen1.5-7b-chat-lora8
 # output_dir: ./qlora-alpaca-out
 
-# hub_model_id: jermyn/CodeQwen1.5-7B-Chat-NLQ2Cypher
-hub_model_id: jermyn/deepseek-code-1.3b-inst-NLQ2Cypher
+hub_model_id: jermyn/CodeQwen1.5-7B-Chat-lora8-NLQ2Cypher
+# hub_model_id: jermyn/deepseek-code-1.3b-inst-NLQ2Cypher
 
-adapter: qlora
+adapter: lora   # 'qlora' or leave blank for full finetune
 lora_model_dir:
 
 sequence_len: 896
@@ -36,14 +36,14 @@ lora_alpha: 16
 lora_dropout: 0.05
 lora_target_linear: true
 lora_fan_in_fan_out:
-lora_target_modules:
-  - gate_proj
-  - down_proj
-  - up_proj
-  - q_proj
-  - v_proj
-  - k_proj
-  - o_proj
+# lora_target_modules:
+#   - gate_proj
+#   - down_proj
+#   - up_proj
+#   - q_proj
+#   - v_proj
+#   - k_proj
+#   - o_proj
 
 # If you added new tokens to the tokenizer, you may need to save some LoRA modules because they need to know the new tokens.
 # For LLaMA and Mistral, you need to save `embed_tokens` and `lm_head`. It may vary for other models.
@@ -56,13 +56,13 @@ lora_target_modules:
 wandb_project: fine-tune-axolotl
 wandb_entity: jermyn
 
-gradient_accumulation_steps: 1
-micro_batch_size: 16
-eval_batch_size: 16
+gradient_accumulation_steps: 2
+micro_batch_size: 8
+eval_batch_size: 8
 num_epochs: 6
 optimizer: adamw_bnb_8bit
 lr_scheduler: cosine
-learning_rate: 0.001
+learning_rate: 0.0005
 max_grad_norm: 1.0
 adam_beta2: 0.95
 adam_epsilon: 0.00001
